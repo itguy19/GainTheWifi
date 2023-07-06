@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">GainTheWifi</string>
+    <string name="save_results">Save data</string>
+    <string name="export_from_db">Export data</string>
+    <string name="clear_db">Clear data</string>
+    <string name="scanning">Start\nscanning:</string>
+    <string name="status">Status:\nstopped</string>
+    <string name="scanImageDescription">This is the turn on and turn off scan button.</string>
+</resources>
