@@ -1,5 +1,6 @@
 package ch.zli.gainthewifi.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -28,10 +29,11 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_view, parent, false));
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.name.setText(networkItems.get(position).getName());
-        holder.signalStrength.setText(String.valueOf(networkItems.get(position).getSignalStrength()));
+        holder.signalStrength.setText(String.valueOf(networkItems.get(position).getSignalStrength()) + " dBm");
         holder.macAddress.setText(networkItems.get(position).getMacAddress());
         holder.channelNumber.setText(String.valueOf(networkItems.get(position).getChannel()));
         holder.securityStandards.setText(networkItems.get(position).getSecurity());
