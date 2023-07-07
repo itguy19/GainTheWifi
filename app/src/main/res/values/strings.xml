@@ -5,5 +5,6 @@
     <string name="clear_db">Clear data</string>
     <string name="scanning">Start\nscanning:</string>
     <string name="status">Status:\nstopped</string>
+    <string name="wifiicon">Wifi Icon</string>
     <string name="scanImageDescription">This is the turn on and turn off scan button.</string>
 </resources>

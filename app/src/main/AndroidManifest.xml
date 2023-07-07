@@ -7,6 +7,11 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
@@ -18,10 +23,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GainTheWifi"
         tools:targetApi="31">
-        <service
-            android:name=".service.WifiService"
-            android:enabled="true"
-            android:exported="true" />
         <service
             android:name=".service.DbService"
             android:enabled="true"

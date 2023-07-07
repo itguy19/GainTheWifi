@@ -32,12 +32,12 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.name.setText(networkItems.get(position).getName());
-        holder.signalStrength.setText(String.valueOf(networkItems.get(position).getSignalStrength()) + " dBm");
-        holder.macAddress.setText(networkItems.get(position).getMacAddress());
-        holder.channelNumber.setText(String.valueOf(networkItems.get(position).getChannel()));
-        holder.securityStandards.setText(networkItems.get(position).getSecurity());
-        holder.wifiImageView.setImageResource(networkItems.get(position).getWifiImage());
+        holder.name.setText(networkItems.get(position).name);
+        holder.signalStrength.setText(String.valueOf(networkItems.get(position).signalStrength) + " dBm");
+        holder.macAddress.setText(networkItems.get(position).macAddress);
+        holder.channelNumber.setText(String.valueOf(networkItems.get(position).channel));
+        holder.securityStandards.setText(networkItems.get(position).security);
+        holder.wifiImageView.setImageResource(networkItems.get(position).wifiImage);
     }
 
     @Override

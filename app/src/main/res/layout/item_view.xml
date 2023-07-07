@@ -9,7 +9,7 @@
         android:layout_width="48dp"
         android:layout_margin="5sp"
         android:id="@+id/wifiImageView"
-        android:contentDescription="Wifi icon" />
+        android:contentDescription="@string/wifiicon" />
     
     <TextView
         android:layout_width="match_parent"

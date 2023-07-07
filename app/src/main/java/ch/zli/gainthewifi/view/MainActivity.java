@@ -30,17 +30,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 import static android.Manifest.permission.ACCESS_WIFI_STATE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 import ch.zli.gainthewifi.R;
 import ch.zli.gainthewifi.modal.NetworkItem;
 import ch.zli.gainthewifi.service.DbService;
-import ch.zli.gainthewifi.service.TimerWifiScan;
-import ch.zli.gainthewifi.service.WifiService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,10 +50,10 @@ public class MainActivity extends AppCompatActivity {
     private WifiManager wifiManager;
     private List<NetworkItem> networkItems;
     private Timer timer;
-    private WifiService wifiService;
     private DbService dbService;
 
 
+    @SuppressLint("StaticFieldLeak")
     public static MainActivity mainActivity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +80,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void setTimer() {
-        new Timer().schedule(new TimerWifiScan(this), 0, 1000);
-    }
-
     private void checkPermissions() {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, 0);
         }
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{ACCESS_NETWORK_STATE}, 0);
+        }
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{ACCESS_WIFI_STATE}, 0);
+        }
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE}, 0);
         }
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{ACCESS_WIFI_STATE}, 0);
@@ -126,7 +126,11 @@ public class MainActivity extends AppCompatActivity {
         List<ScanResult> results = wifiManager.getScanResults();
         networkItems.clear();
         for (ScanResult r: results) {
-            networkItems.add(new NetworkItem(r.SSID, r.BSSID, r.frequency, r.capabilities.substring(0, 8) + "..", r.level, R.drawable.wifi_on));
+            String capabilities = r.capabilities;
+            if (capabilities.length() >= 8) {
+                capabilities = r.capabilities.substring(0, 8) + "..";
+            }
+            networkItems.add(new NetworkItem(r.SSID, r.BSSID, r.frequency, capabilities, r.level, R.drawable.wifi_on));
         }
         recyclerView.setAdapter(new ViewAdapter(getApplicationContext(), networkItems));
     }
@@ -148,8 +152,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Intent bindBMIServiceIntent = new Intent(this, WifiService.class);
-        bindService(bindBMIServiceIntent, connection, Context.BIND_AUTO_CREATE);
+        Intent bindDbServiceIntent = new Intent(this, DbService.class);
+        bindService(bindDbServiceIntent, connection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -162,10 +166,9 @@ public class MainActivity extends AppCompatActivity {
     private final ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            WifiService.WifiBinder binder = (WifiService.WifiBinder)  iBinder;
-            wifiService = binder.getService();
+            DbService.LocalBinder binder = (DbService.LocalBinder)  iBinder;
+            dbService = binder.getService();
             isWifiServiceBound = true;
-            // TODO
         }
 
         @Override
@@ -178,10 +181,13 @@ public class MainActivity extends AppCompatActivity {
         String message = "Nothing clicked";
         if (item.getItemId() == R.id.saveRes) {
             message = "Data saved";
+            dbService.saveData(networkItems);
         } else if (item.getItemId() == R.id.exportDb) {
             message = "Data exported";
+            dbService.exportData();
         } else if (item.getItemId() == R.id.clearDB) {
             message = "Data cleared";
+            dbService.clearData();
         }
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
         return super.onOptionsItemSelected(item);
