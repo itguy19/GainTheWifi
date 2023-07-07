@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.ACCESS_NETWORK_STATE;
@@ -49,8 +51,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean isWifiServiceBound;
     private WifiManager wifiManager;
     private List<NetworkItem> networkItems;
+    private Timer timer;
     private WifiService wifiService;
     private DbService dbService;
+
 
     public static MainActivity mainActivity;
     @Override
@@ -75,6 +79,11 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         checkPermissions();
+
+    }
+
+    private void setTimer() {
+        new Timer().schedule(new TimerWifiScan(this), 0, 1000);
     }
 
     private void checkPermissions() {
@@ -87,8 +96,6 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{ACCESS_WIFI_STATE}, 0);
         }
-
-        new TimerWifiScan(this);
     }
 
     /**************************************WIFI SCANNER**********************************************/
