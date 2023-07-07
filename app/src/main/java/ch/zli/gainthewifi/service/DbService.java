@@ -8,11 +8,8 @@ import android.os.IBinder;
 
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import ch.zli.gainthewifi.modal.NetworkItem;
@@ -20,7 +17,6 @@ import ch.zli.gainthewifi.service.database.AppDatabase;
 
 public class DbService extends Service {
     private final IBinder binder = new LocalBinder();
-    private AppDatabase appDatabase;
 
     public class LocalBinder extends Binder {
         public DbService getService() {
@@ -35,9 +31,7 @@ public class DbService extends Service {
     }
 
     public void saveData(List<NetworkItem> networkItems) {
-        AsyncTask.execute(() -> {
-            AppDatabase.getInstance(this).networkDao().insertAll(networkItems);
-        });
+        AsyncTask.execute(() -> AppDatabase.getInstance(this).networkDao().insertAll(networkItems));
     }
 
     public void exportData() {
@@ -59,8 +53,6 @@ public class DbService extends Service {
     }
 
     public void clearData() {
-        AsyncTask.execute(() -> {
-            AppDatabase.getInstance(this).networkDao().clearDatabase();
-        });
+        AsyncTask.execute(() -> AppDatabase.getInstance(this).networkDao().clearDatabase());
     }
 }

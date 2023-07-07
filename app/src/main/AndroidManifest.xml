@@ -26,7 +26,8 @@
         <service
             android:name=".service.DbService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false"
+            tools:ignore="KnownPermissionError" />
 
         <activity
             android:name=".view.MainActivity"

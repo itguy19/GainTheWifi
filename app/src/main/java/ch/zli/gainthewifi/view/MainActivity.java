@@ -15,7 +15,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -29,7 +28,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.ACCESS_NETWORK_STATE;
@@ -46,11 +44,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView statusTextView;
     private RecyclerView recyclerView;
     public static boolean scanModeOn = false;
-    private boolean isWifiServiceBound;
     private WifiManager wifiManager;
     private List<NetworkItem> networkItems;
-    private Timer timer;
     private DbService dbService;
+    private boolean isDbServceBound;
 
 
     @SuppressLint("StaticFieldLeak")
@@ -59,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         mainActivity = this;
 
@@ -160,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         unbindService(connection);
-        isWifiServiceBound = false;
+        isDbServceBound = false;
     }
 
     private final ServiceConnection connection = new ServiceConnection() {
@@ -168,12 +164,12 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             DbService.LocalBinder binder = (DbService.LocalBinder)  iBinder;
             dbService = binder.getService();
-            isWifiServiceBound = true;
+            isDbServceBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            isWifiServiceBound = false;
+            isDbServceBound = false;
         }
     };
     @Override
